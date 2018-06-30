@@ -15,10 +15,11 @@
  */
 package com.example.android.miwok;
 
-import android.content.Intent;
+
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
 
 
@@ -32,40 +33,12 @@ public class MainActivity extends AppCompatActivity {
         // Set the content of the activity to use the activity_main.xml layout file
         setContentView(R.layout.activity_main);
 
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        CategoryPagerAdapter adapter = new CategoryPagerAdapter(getSupportFragmentManager());
 
+        viewPager.setAdapter(adapter);
 
-        numbers = findViewById(R.id.numbers);
-        numbers.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent numberIntent =  new Intent(MainActivity.this, NumbersActivity.class);
-                startActivity(numberIntent);
-            }
-        });
-        colors = findViewById(R.id.colors);
-        colors. setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent colorIntent = new Intent(MainActivity.this, ColorActivity.class);
-                startActivity(colorIntent);
-            }
-        });
-        phrases = findViewById(R.id.phrases);
-        phrases.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent phraseIntent = new Intent(MainActivity.this, PhrasesActivity.class);
-                startActivity(phraseIntent);
-            }
-        });
-        family = findViewById(R.id.family);
-        family.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent familyIntent = new Intent(MainActivity.this, FamilyMembersActivity.class);
-                startActivity(familyIntent);
-            }
-        });
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
-
 }

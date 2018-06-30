@@ -1,25 +1,28 @@
 package com.example.android.miwok;
 
+
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 
-public class NumbersActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class NumbersFragment extends Fragment {
     private MediaPlayer mMediaPlayer;
     private AudioManager mAudioManager;
 
-
     /*
-  listen for completion of playback
-   */
+listen for completion of playback
+*/
     private MediaPlayer.OnCompletionListener mCompletionListener= new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
@@ -27,7 +30,7 @@ public class NumbersActivity extends AppCompatActivity {
         }
     };
 
-    private OnAudioFocusChangeListener mOnAudioFocusChangeListener = new OnAudioFocusChangeListener() {
+    private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
             if(focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT||focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK){
@@ -41,14 +44,17 @@ public class NumbersActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    public NumbersFragment() {
+        // Required empty public constructor
+    }
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+       View rootView = inflater.inflate(R.layout.word_list, container, false);
         //request system service for audio manager
-        mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = (AudioManager)getActivity().getSystemService(Context.AUDIO_SERVICE);
 
         final ArrayList<Word> words = new ArrayList<>();
         words.add(new Word("one", "lutti", R.drawable.number_one, R.raw.number_one));
@@ -64,9 +70,9 @@ public class NumbersActivity extends AppCompatActivity {
 
 
 
-        WordAdapter numbersActivityAdapter = new WordAdapter(this, words, R.color.category_numbers);
+        WordAdapter numbersActivityAdapter = new WordAdapter(getActivity(), words, R.color.category_numbers);
 
-        ListView listView = findViewById(R.id.list);
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
 
 
         listView.setAdapter(numbersActivityAdapter);
@@ -80,7 +86,7 @@ public class NumbersActivity extends AppCompatActivity {
                 Word word = words.get(position);
 
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    mMediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getAudioResourceId());
+                    mMediaPlayer = MediaPlayer.create(getActivity(), word.getAudioResourceId());
 
                     mMediaPlayer.start();
                     mMediaPlayer.setOnCompletionListener(mCompletionListener);
@@ -89,15 +95,8 @@ public class NumbersActivity extends AppCompatActivity {
             }
         });
 
+       return rootView;
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        releaseMediaPlayer();
-    }
-
     /**
      * Clean up the media player by releasing its resources.
      */
@@ -114,5 +113,11 @@ public class NumbersActivity extends AppCompatActivity {
             mMediaPlayer = null;
             mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        releaseMediaPlayer();
     }
 }
